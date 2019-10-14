@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "936906103020",
+    "firebase_url": "https://seektreasure-8cf4f.firebaseio.com",
+    "project_id": "seektreasure-8cf4f",
+    "storage_bucket": "seektreasure-8cf4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:936906103020:android:650f16d77891a031816dc9",
+        "android_client_info": {
+          "package_name": "com.inti.seektreasure"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "936906103020-h2io3duk3kbba2almpcba1bbc307l859.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.inti.seektreasure",
+            "certificate_hash": "28f0791bf51d17a7738628103ccd5f02f94dfe01"
+          }
+        },
+        {
+          "client_id": "936906103020-2mevnu80n0loj1g77ntumud2moudk81b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGlXdbAO8OyZvWgnJT3Yr3cbts0f8-0Vg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "936906103020-2mevnu80n0loj1g77ntumud2moudk81b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
