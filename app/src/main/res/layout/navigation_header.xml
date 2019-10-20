@@ -30,6 +30,6 @@
         android:layout_marginBottom="7dp"
         android:text="username"
         android:textAlignment="center"
-        android:textSize="16dp" />
+        android:textSize="14sp" />
 
 </RelativeLayout>
