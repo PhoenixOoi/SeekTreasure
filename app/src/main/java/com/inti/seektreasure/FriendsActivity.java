@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.data.model.User;
@@ -26,6 +27,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -59,6 +65,62 @@ public class FriendsActivity extends AppCompatActivity
         DisplayAllFriends();
     }
 
+
+    //state will be online offline
+    public void updateUserStatus(String state)
+    {
+        String saveCurrentDate, saveCurrentTime;
+
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
+
+        Calendar calForTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a"); //a will be am or pm
+        saveCurrentTime = currentTime.format(calForTime.getTime());
+
+
+        //save in database in Users node
+        Map currentStateMap = new HashMap<>();
+        currentStateMap.put("time", saveCurrentTime);
+        currentStateMap.put("date", saveCurrentDate);
+        currentStateMap.put("type", state); //pass parameter to it
+
+        //already create the references for the user node
+        //create another child for saving the online user information(online status and last seen info) under parent node
+        UsersRef.child(online_user_id).child("userState")
+                .updateChildren(currentStateMap);
+
+    }
+
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        //when user come to this Friends activity, it mean online
+        updateUserStatus("online");
+
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+
+        //when user minimize the app
+        updateUserStatus("offline");
+
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        //if app destroy or crashed then also change to offline
+        updateUserStatus("offline");
+    }
+
     private void DisplayAllFriends()
     {
         FirebaseRecyclerOptions<Friends> options = new FirebaseRecyclerOptions.Builder<Friends>()
@@ -81,6 +143,21 @@ public class FriendsActivity extends AppCompatActivity
                             final String userName = dataSnapshot.child("fullname").getValue().toString(); //retrieve user name
                             final String profileImage = dataSnapshot.child("profileimage").getValue().toString(); //retrieve profile image
                             final String country = dataSnapshot.child("country").getValue().toString();
+                            final String type;
+
+                            if(dataSnapshot.hasChild("userState"))
+                            {
+                                type = dataSnapshot.child("userState").child("type").getValue().toString();
+
+                                if(type.equals("online"))
+                                {
+                                    holder.onlineStatusView.setVisibility(View.VISIBLE);
+                                }
+                                else
+                                {
+                                    holder.onlineStatusView.setVisibility(View.INVISIBLE);
+                                }
+                            }
 
                             holder.setFullname(userName);
                             holder.setProfileimage(getApplicationContext(),profileImage);
@@ -160,12 +237,16 @@ public class FriendsActivity extends AppCompatActivity
         TextView fullname, date;
         CircleImageView profileimage;
         View mView;
+        ImageView onlineStatusView;
+
 
         public FriendsViewHolder(@NonNull View itemView)
         {
             super(itemView);
 
             mView = itemView;
+
+            onlineStatusView = (ImageView)itemView.findViewById(R.id.all_user_online_icon);
 
            // fullname = itemView.findViewById(R.id.all_users_profile_full_name);
             //profileimage = itemView.findViewById(R.id.all_users_profile_image);
