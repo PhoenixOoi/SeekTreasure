@@ -120,6 +120,21 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/bargain_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/delete_post_button"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="23dp"
+            android:ems="10"
+            android:gravity="center"
+            android:background="@drawable/button"
+            android:text="Bargain"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"/>
     </RelativeLayout>
 
 </ScrollView>

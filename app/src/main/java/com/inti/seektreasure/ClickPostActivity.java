@@ -39,6 +39,12 @@ public class ClickPostActivity extends AppCompatActivity
 
     private String description, pname, price, category, postimage; //declared here becuz need to use manytime (used to in onDataChange())
 
+    //add1
+    private Button BargainButton;
+    private DatabaseReference UsersRef;
+
+
+
 
 
     @Override
@@ -55,6 +61,7 @@ public class ClickPostActivity extends AppCompatActivity
         PostKey = getIntent().getExtras().get("PostKey").toString();
         ClickPostRef = FirebaseDatabase.getInstance().getReference().child("Posts").child(PostKey);//searching for PostKey only in database Posts
 
+
         PostImage = (ImageView)findViewById(R.id.click_post_image);
         PostDescription = (TextView) findViewById(R.id.click_post_description);
         PostName = (TextView) findViewById(R.id.click_post_name);
@@ -63,9 +70,17 @@ public class ClickPostActivity extends AppCompatActivity
         DeletePostButton = (Button) findViewById(R.id.delete_post_button);
         EditPostButton = (Button) findViewById(R.id.edit_post_button);
 
+        //add1
+        BargainButton = (Button) findViewById(R.id.bargain_button);
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
+
 
         DeletePostButton.setVisibility(View.INVISIBLE);
         EditPostButton.setVisibility(View.INVISIBLE);
+
+        //add1
+        BargainButton.setVisibility(View.VISIBLE);
 
         ClickPostRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -100,7 +115,15 @@ public class ClickPostActivity extends AppCompatActivity
                    // Picasso.get().load(postimage).into(PostImage);
 
 
+                    //add1
+                    BargainButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            BargainActivity(databaseUserID);
 
+                        }
+                    });
 
 
 
@@ -111,9 +134,13 @@ public class ClickPostActivity extends AppCompatActivity
                         //visible the delete and edit button
                         DeletePostButton.setVisibility(View.VISIBLE);
                         EditPostButton.setVisibility(View.VISIBLE);
+
+                        //add1
+                        BargainButton.setVisibility(View.INVISIBLE);
                     }
 
-                    EditPostButton.setOnClickListener(new View.OnClickListener() {
+                    EditPostButton.setOnClickListener(new View.OnClickListener()
+                    {
                         @Override
                         public void onClick(View v)
                         {
@@ -144,6 +171,8 @@ public class ClickPostActivity extends AppCompatActivity
                 DeleteCurrentPost();
             }
         });
+
+
 
 
     }
@@ -215,5 +244,34 @@ public class ClickPostActivity extends AppCompatActivity
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
         finish();
+    }
+
+    //add1
+    private void BargainActivity(final String databaseUserID)
+    {
+        UsersRef.child(databaseUserID).addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    final String userName = dataSnapshot.child("fullname").getValue().toString(); //retrieve user name
+                    Intent Chatintent = new Intent(ClickPostActivity.this, ChatActivity.class);
+                    //send user id
+                    Chatintent.putExtra("visit_user_id",databaseUserID); // from person profile pic send user id //sending to the chat activity
+                    Chatintent.putExtra("userName",userName);
+                    startActivity(Chatintent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
+
     }
 }

@@ -255,6 +255,9 @@ public class MainActivity extends AppCompatActivity
 //                        holder.setDate(model.getDate());
 //                        holder.SetTime(model.getTime());
 
+
+
+
                         holder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v)
