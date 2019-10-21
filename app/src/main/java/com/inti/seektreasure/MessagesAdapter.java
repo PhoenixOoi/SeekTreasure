@@ -25,6 +25,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>
 {
+
+
     private List<Messages> userMessagesList;
     private FirebaseAuth mAuth;
     private DatabaseReference usersDatabaseRef;
@@ -83,7 +85,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
-                if(dataSnapshot.exists())
+                if(dataSnapshot.hasChild("profileimage"))
                 {
                     String image = dataSnapshot.child("profileimage").getValue().toString();
 
@@ -98,16 +100,23 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
             }
         });
+        //additional add
+        holder.receiverProfileImage.setVisibility(View.GONE);
+        holder.ReceiverMessageText.setVisibility(View.GONE);
+        holder.SenderMessageText.setVisibility(View.GONE);
 
         if(fromMessageType.equals("text"))
         {
-            //display the message layout
-            holder.ReceiverMessageText.setVisibility(View.INVISIBLE);
-            holder.receiverProfileImage.setVisibility(View.INVISIBLE);
+//            //display the message layout
+//            holder.ReceiverMessageText.setVisibility(View.INVISIBLE);
+//            holder.receiverProfileImage.setVisibility(View.INVISIBLE);
 
             //dispaly the message for the sender and receiver
             if(fromUserID.equals(messageSenderID))
             {
+                //add
+                holder.SenderMessageText.setVisibility(View.VISIBLE);
+
                 holder.SenderMessageText.setBackgroundResource(R.drawable.sender_message_text_background);
                 holder.SenderMessageText.setTextColor(Color.WHITE);
                 holder.SenderMessageText.setGravity(Gravity.LEFT);
@@ -136,6 +145,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     public int getItemCount()
     {
         //return the size
+
         return userMessagesList.size();
     }
 }

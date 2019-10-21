@@ -13,39 +13,57 @@
         android:layout_marginLeft="10dp"
         android:src="@drawable/profile"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="5dp">
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       >
 
-        <TextView
-            android:id="@+id/all_users_profile_full_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="user full name"
-            android:textAlignment="textStart"
-            android:textColor="@android:color/background_light"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:layout_margin="5dp">
 
-        <TextView
-            android:id="@+id/all_users_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="status"
-            android:textAlignment="textStart"
-            android:textColor="@android:color/background_light"
-            android:textSize="16sp" />
+           <TextView
+               android:id="@+id/all_users_profile_full_name"
+               android:layout_width="190dp"
+               android:layout_height="wrap_content"
+               android:text="user full name"
+               android:textAlignment="textStart"
+               android:textColor="@android:color/background_light"
+               android:textSize="18sp"
+               android:textStyle="bold"/>
+           
+           <ImageView
+               android:id="@+id/all_user_online_icon"
+               android:layout_width="20dp"
+               android:layout_height="20dp"
+               android:src="@drawable/online"
+               android:visibility="invisible"
+               />
 
-        <TextView
-            android:id="@+id/all_users_country"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="country"
-            android:textAlignment="textStart"
-            android:textColor="@android:color/background_light"
-            android:textSize="16sp" />
 
-    </LinearLayout>
+       </LinearLayout>
+
+       <TextView
+           android:id="@+id/all_users_status"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="status"
+           android:textAlignment="textStart"
+           android:textColor="@android:color/background_light"
+           android:textSize="16sp" />
+
+       <TextView
+           android:id="@+id/all_users_country"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:text="country"
+           android:textAlignment="textStart"
+           android:textColor="@android:color/background_light"
+           android:textSize="16sp" />
+
+
+   </LinearLayout>
 </LinearLayout>

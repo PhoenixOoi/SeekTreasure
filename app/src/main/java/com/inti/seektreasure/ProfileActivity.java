@@ -3,7 +3,10 @@ package com.inti.seektreasure;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,10 +26,12 @@ public class ProfileActivity extends AppCompatActivity
     private TextView userName, userProfName, userStatus, userCountry, userGender, SellerBuyer, userDOB;
     private CircleImageView userProfileImage;
 
-    private DatabaseReference profileUserRef;
+    private DatabaseReference profileUserRef, FollowersRef, PostsRef; // folowersref is to count how many followers, postsref is to count post
     private FirebaseAuth mAuth;
+    private Button MyPosts, MyFollowers;
 
     private String currentUserId;
+    private int countFollowers= 0, countPosts = 0;
 
 
 
@@ -38,8 +43,10 @@ public class ProfileActivity extends AppCompatActivity
 
 
         mAuth = FirebaseAuth.getInstance();
-        currentUserId = mAuth.getCurrentUser().getUid();
+        currentUserId = mAuth.getCurrentUser().getUid();//get user id
         profileUserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        FollowersRef = FirebaseDatabase.getInstance().getReference().child("Friends"); // to count the followers
+        PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");// to apply firebase query for couting how much post
 
         userName = (TextView) findViewById(R.id.my_username);
         userProfName = (TextView) findViewById(R.id.my_profile_full_name);
@@ -49,6 +56,82 @@ public class ProfileActivity extends AppCompatActivity
         SellerBuyer = (TextView) findViewById(R.id.my_seller_buyer);
         userDOB = (TextView) findViewById(R.id.my_dob);
         userProfileImage = (CircleImageView) findViewById(R.id.my_profile_pic);
+        MyFollowers = (Button) findViewById(R.id.my_followers_button);
+        MyPosts = (Button) findViewById(R.id.my_post_button);
+
+
+        MyFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                SendUserToFollowersActivity();
+            }
+        });
+
+        MyPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                SendUserToMyPostsActivity();
+            }
+        });
+
+        //order by child is to get uid (get specific firebase query
+        PostsRef.orderByChild("uid")
+                .startAt(currentUserId).endAt(currentUserId + "\uf8ff")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if(dataSnapshot.exists())
+                        {
+                            //if user have posts
+                            countPosts = (int) dataSnapshot.getChildrenCount();
+                            MyPosts.setText(Integer.toString(countPosts) + " Posts");
+                        }
+                        else
+                        {
+                            //if users dun have posts
+                            MyPosts.setText("0 Posts");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError)
+                    {
+
+                    }
+                });
+
+
+
+        FollowersRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    //if user has followers
+                    //create integer variable to stored the count child
+                    countFollowers = (int) dataSnapshot.getChildrenCount();
+                    MyFollowers.setText(Integer.toString(countFollowers)+ " Followers");
+
+                }
+                else
+                {
+                    //if user has no followers
+                    MyFollowers.setText("0 Followers");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
+
 
         profileUserRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -87,5 +170,19 @@ public class ProfileActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    private void SendUserToFollowersActivity()
+    {
+        Intent followersIntent = new Intent(ProfileActivity.this, FriendsActivity.class);
+        startActivity(followersIntent);
+
+    }
+
+    private void SendUserToMyPostsActivity()
+    {
+        Intent followersIntent = new Intent(ProfileActivity.this, MyPostsActivity.class);
+        startActivity(followersIntent);
+
     }
 }

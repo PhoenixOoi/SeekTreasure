@@ -54,10 +54,10 @@ public class ChatActivity extends AppCompatActivity
 
     private String messageReceiverID, messageReceiverName, messageSenderID,saveCurrentDate,saveCurrentTime;
 
-    private TextView receiverName;
+    private TextView receiverName, userLastSeen;
     private CircleImageView receiverProfileImage;
 
-    private DatabaseReference RootRef;
+    private DatabaseReference RootRef, UserRef;
     private FirebaseAuth mAuth; //to store message
 
 
@@ -71,6 +71,8 @@ public class ChatActivity extends AppCompatActivity
         messageSenderID = mAuth.getCurrentUser().getUid();
 
         RootRef = FirebaseDatabase.getInstance().getReference(); // link to whole database so no need to access child
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+
 
         messageReceiverID = getIntent().getExtras().get("visit_user_id").toString();
         messageReceiverName = getIntent().getExtras().get("userName").toString();
@@ -88,14 +90,20 @@ public class ChatActivity extends AppCompatActivity
             }
         });
 
-        FetchMessages();
+        //FetchMessages();
     }
 
+//add
 
-    private void FetchMessages()
-    {
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+//    private void FetchMessages()
+//    {
         //references to our messages node
-        RootRef.child("Messages").child(messageSenderID).child(messageReceiverID)
+        RootRef.child("Message").child(messageSenderID).child(messageReceiverID)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s)
@@ -106,6 +114,7 @@ public class ChatActivity extends AppCompatActivity
                             messagesList.add(messages);
                             messageAdapter.notifyDataSetChanged(); //whenever got data it will notify the change
 
+                            userMessagesList.smoothScrollToPosition(userMessagesList.getAdapter().getItemCount());
 
                         }
 
@@ -135,6 +144,9 @@ public class ChatActivity extends AppCompatActivity
 
     private void SendMessage()
     {
+        //when ever send the message it should update our last seen and online offline status
+        updateUserStatus("online");
+
         //get the message from the input field
         String messageText = userMessageInput.getText().toString();
 
@@ -200,6 +212,35 @@ public class ChatActivity extends AppCompatActivity
         }
     }
 
+    //state will be online offline
+    public void updateUserStatus(String state)
+    {
+        String saveCurrentDate, saveCurrentTime;
+
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
+
+        Calendar calForTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a"); //a will be am or pm
+        saveCurrentTime = currentTime.format(calForTime.getTime());
+
+
+        //save in database in Users node
+        Map currentStateMap = new HashMap<>();
+        currentStateMap.put("time", saveCurrentTime);
+        currentStateMap.put("date", saveCurrentDate);
+        currentStateMap.put("type", state); //pass parameter to it
+
+        //already create the references for the user node
+        //create another child for saving the online user information(online status and last seen info) under parent node
+        UserRef.child(messageSenderID).child("userState")
+                .updateChildren(currentStateMap);
+
+    }
+
+
+
     private void DisplayReceiverInfo()
     {
         receiverName.setText(messageReceiverName);
@@ -212,6 +253,21 @@ public class ChatActivity extends AppCompatActivity
                 if(dataSnapshot.exists())
                 {
                     final String profileImage = dataSnapshot.child("profileimage").getValue().toString(); //make sure same name as firebase
+
+                    //for retrieving the last seen data (userstate)
+                    final String type = dataSnapshot.child("userState").child("type").getValue().toString();
+                    final String lastDate = dataSnapshot.child("userState").child("date").getValue().toString();
+                    final String lastTime = dataSnapshot.child("userState").child("time").getValue().toString();
+
+                    if (type.equals("online"))
+                    {
+                        userLastSeen.setText("online");
+                    }
+                    else
+                    {
+                        //if user is not online then can display the last seen for user friend
+                        userLastSeen.setText("last seen: " + lastTime + " " + lastDate);
+                    }
 
                     //display
                     Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(receiverProfileImage);
@@ -236,12 +292,13 @@ public class ChatActivity extends AppCompatActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
+
         LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View action_bar_view = layoutInflater.inflate(R.layout.chat_custom_bar, null);
         actionBar.setCustomView(action_bar_view);
 
 
-
+        userLastSeen = (TextView) findViewById(R.id.custom_user_last_seen);
         receiverName = (TextView) findViewById(R.id.custom_profile_name);
         receiverProfileImage = (CircleImageView) findViewById(R.id.custom_profile_image);
 
@@ -253,7 +310,7 @@ public class ChatActivity extends AppCompatActivity
         messageAdapter = new MessagesAdapter(messagesList);
         userMessagesList = (RecyclerView) findViewById(R.id.messages_list_users);
         linearLayoutManager = new LinearLayoutManager(this);
-        userMessagesList.setHasFixedSize(true);
+       // userMessagesList.setHasFixedSize(true);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(messageAdapter);
 

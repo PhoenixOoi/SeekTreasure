@@ -35,6 +35,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
@@ -172,6 +177,34 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //state will be online offline
+    public void updateUserStatus(String state)
+    {
+        String saveCurrentDate, saveCurrentTime;
+
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd, yyyy");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
+
+        Calendar calForTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a"); //a will be am or pm
+        saveCurrentTime = currentTime.format(calForTime.getTime());
+
+
+        //save in database in Users node
+        Map currentStateMap = new HashMap<>();
+        currentStateMap.put("time", saveCurrentTime);
+        currentStateMap.put("date", saveCurrentDate);
+        currentStateMap.put("type", state); //pass parameter to it
+
+        //already create the references for the user node
+        //create another child for saving the online user information(online status and last seen info) under parent node
+        UsersRef.child(currentUserID).child("userState")
+                .updateChildren(currentStateMap);
+
+    }
+
+
     private void DisplayAllUsersPosts()
     {
         //query to solve the post in descending order , refer to post actvity
@@ -289,6 +322,11 @@ public class MainActivity extends AppCompatActivity
                 };
         firebaseRecyclerAdapter.startListening();
         postList.setAdapter(firebaseRecyclerAdapter);
+
+        //whenever the app run
+        //call this method and pass the state
+        //the state is online
+        updateUserStatus("online");
 
     }
 
@@ -525,6 +563,9 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_Logout:
+                //when user logout then it become offline and also the last seen
+                updateUserStatus("offline");
+
                 mAuth.signOut(); // sign out the user from firebase authentication
                 //send user to login activity (logout)
                 SendUserToLoginActivity();

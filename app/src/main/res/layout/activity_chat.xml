@@ -8,20 +8,22 @@
     tools:context=".ChatActivity">
 
     <include
-        layout="@layout/app_bar_layout"
-        android:id="@+id/chat_bar_layout">
+        android:id="@+id/chat_bar_layout"
+        layout="@layout/app_bar_layout">
     </include>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages_list_users"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/chat_bar_layout"
         android:layout_above="@+id/myLinearLayout"
         android:background="@android:color/darker_gray"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" >
 
-    <LinearLayout
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <RelativeLayout
         android:id="@+id/myLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,14 +43,16 @@
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:hint="write your message here."
+            android:layout_toEndOf="@+id/send_image_file_button"
             android:padding="17dp"/>
 
         <ImageButton
             android:id="@+id/send_message_button"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/ic_send_message"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>
