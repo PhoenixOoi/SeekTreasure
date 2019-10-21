@@ -42,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity
         setContentView(R.layout.activity_profile);
 
 
+
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();//get user id
         profileUserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);

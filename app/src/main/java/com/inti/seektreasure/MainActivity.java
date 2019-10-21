@@ -548,6 +548,12 @@ public class MainActivity extends AppCompatActivity
                 //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
                 break;
 
+                //add nearby
+            case R.id.nav_nearby:
+                SendUserToNearbyActivity();
+                //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
+                break;
+
             case R.id.nav_find_people:
                 SendUserToFindSellerBuyerActivity();
                 Toast.makeText(this,"Find People", Toast.LENGTH_SHORT).show();
@@ -571,6 +577,12 @@ public class MainActivity extends AppCompatActivity
                 SendUserToLoginActivity();
                 break;
         }
+    }
+
+    private void SendUserToNearbyActivity()
+    {
+        Intent nearbyIntent = new Intent(MainActivity.this, NearbyActivity.class);
+        startActivity(nearbyIntent);
     }
 
     private void SendUserToFollowersActivity()

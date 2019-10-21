@@ -67,7 +67,7 @@
                 android:id="@+id/person_country"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Country"
+                android:text="States"
                 android:layout_below="@+id/person_profile_status"
                 android:layout_marginTop="60dp"
                 android:textAlignment="center"
@@ -134,6 +134,34 @@
                 android:textColor="@android:color/background_light"
                 android:textSize="16sp"
                 android:layout_centerHorizontal="true" />
+
+            <Button
+                android:id="@+id/person_my_post_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="25dp"
+                android:text="Posts"
+                android:layout_below="@id/person_declined_friend_request"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@android:color/background_light"
+                android:textSize="16dp"/>
+
+            <Button
+                android:id="@+id/person_my_followers_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="25dp"
+                android:text="Followers"
+                android:layout_below="@id/person_declined_friend_request"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="@android:color/background_light"
+                android:textSize="16dp"/>
 
         </RelativeLayout>
     </ScrollView>

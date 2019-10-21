@@ -21,6 +21,13 @@
         android:title="followers"
         android:icon="@drawable/friends"/>
 
+    //add find nearby store
+    <item
+        android:id="@+id/nav_nearby"
+        android:title="Nearby People"
+        android:icon="@drawable/ic_location"/>
+
+
     <item
         android:id="@+id/nav_find_people"
         android:title="Find People"

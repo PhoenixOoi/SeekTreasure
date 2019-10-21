@@ -3,6 +3,7 @@ package com.inti.seektreasure;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -34,6 +35,12 @@ public class PersonProfileActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private String senderUserId, receiverUserId, CURRENT_STATE, saveCurrentDate; //user who will be online will send friend request
 
+    //add
+    private DatabaseReference FollowersRef, PostsRef;
+
+    //add
+    private Button MyPosts, MyFollowers;
+    private int countFollowers= 0, countPosts = 0;
 
 
     @Override
@@ -41,6 +48,10 @@ public class PersonProfileActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_profile);
+
+        //add
+        MyFollowers = (Button) findViewById(R.id.person_my_followers_button);
+        MyPosts = (Button) findViewById(R.id.person_my_post_button);
 
         mAuth = FirebaseAuth.getInstance();
         //person who send the friend request
@@ -51,6 +62,83 @@ public class PersonProfileActivity extends AppCompatActivity
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         FriendRequestRef = FirebaseDatabase.getInstance().getReference().child("FriendRequests");
         FriendsRef = FirebaseDatabase.getInstance().getReference().child("Friends");
+
+
+        //add
+        FollowersRef = FirebaseDatabase.getInstance().getReference().child("Friends"); // to count the followers
+        PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");// to apply firebase query for couting how much post
+
+        //add
+        MyFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                SendUserToFollowersActivity();
+            }
+        });
+        //add
+        MyPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                SendUserToMyPostsActivity();
+            }
+        });
+
+
+        //order by child is to get uid (get specific firebase query
+        PostsRef.orderByChild("uid")
+                .startAt(receiverUserId).endAt(receiverUserId + "\uf8ff")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                    {
+                        if(dataSnapshot.exists())
+                        {
+                            //if user have posts
+                            countPosts = (int) dataSnapshot.getChildrenCount();
+                            MyPosts.setText(Integer.toString(countPosts) + " Posts");
+                        }
+                        else
+                        {
+                            //if users dun have posts
+                            MyPosts.setText("0 Posts");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError)
+                    {
+
+                    }
+                });
+
+        FollowersRef.child(receiverUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                if(dataSnapshot.exists())
+                {
+                    //if user has followers
+                    //create integer variable to stored the count child
+                    countFollowers = (int) dataSnapshot.getChildrenCount();
+                    MyFollowers.setText(Integer.toString(countFollowers)+ " Followers");
+
+                }
+                else
+                {
+                    //if user has no followers
+                    MyFollowers.setText("0 Followers");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError)
+            {
+
+            }
+        });
+
 
         InitializeFields();
 
@@ -97,6 +185,8 @@ public class PersonProfileActivity extends AppCompatActivity
             }
         });
 
+
+
         DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
         DeclineFriendRequestButton.setEnabled(false);
 
@@ -138,6 +228,23 @@ public class PersonProfileActivity extends AppCompatActivity
         }
     }
 
+    //add
+    private void SendUserToFollowersActivity()
+    {
+        Intent followersIntent = new Intent(PersonProfileActivity.this, FriendsActivity.class);
+        startActivity(followersIntent);
+
+    }
+    //add
+    private void SendUserToMyPostsActivity()
+    {
+        Intent followersIntent = new Intent(PersonProfileActivity.this, MyPostsActivity.class);
+        startActivity(followersIntent);
+
+    }
+
+
+
     private void UnFriendAnExistingFriend()
     {
         //user friend reference if the user click on unfriend then both will become unfriend each other
@@ -173,6 +280,8 @@ public class PersonProfileActivity extends AppCompatActivity
 
                     }
                 });
+
+
     }
 
     private void AcceptFriendRequest()
