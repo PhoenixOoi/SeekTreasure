@@ -3,19 +3,24 @@ package com.inti.seektreasure;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +64,11 @@ public class ChatActivity extends AppCompatActivity
 
     private DatabaseReference RootRef, UserRef;
     private FirebaseAuth mAuth; //to store message
+    //add3
+    private String ProductName, product_price;
+    private Button BargainProductButton, ShippingDetailsButton;
+
+
 
 
     @Override
@@ -77,10 +87,48 @@ public class ChatActivity extends AppCompatActivity
         messageReceiverID = getIntent().getExtras().get("visit_user_id").toString();
         messageReceiverName = getIntent().getExtras().get("userName").toString();
 
+        //add3
+        Bundle extras = getIntent().getExtras();
+        if(extras !=null) {
+          //  ProductName = getIntent().getExtras().get("pname").toString();
+            ProductName = extras.getString("pname");
+        }
+
+
 
         InitializeFields();
 
         DisplayReceiverInfo();
+
+
+        BargainProductButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                if(ProductName!= null)
+                {
+                    EditProductPrice(ProductName);
+//                    userMessageInput.setText("I am interested on this product: " + ProductName + " and want to make an offer for RM:" + product_price);
+//                    SendMessage();
+                }
+                else
+                {
+                    BargainProductButton.setVisibility(View.INVISIBLE);
+                }
+
+            }
+        });
+
+
+        //add 4
+        ShippingDetailsButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                GetShippingAddr();
+            }
+        });
 
         SendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +140,103 @@ public class ChatActivity extends AppCompatActivity
 
         //FetchMessages();
     }
+
+    //add 4
+    private void GetShippingAddr()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+        builder.setTitle("Please enter Shipping Details");
+
+        LinearLayout layout = new LinearLayout(ChatActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText Shipping_name = new EditText(ChatActivity.this);
+        Shipping_name.setText("Shipping Name");
+        layout.addView(Shipping_name);
+
+        final EditText Contact_no = new EditText(ChatActivity.this);
+        Contact_no.setText("Contact Number");
+        layout.addView(Contact_no);
+
+        final EditText Home_addr = new EditText(ChatActivity.this);
+        Home_addr.setText("Home Addresses");
+        layout.addView(Home_addr);
+
+        final EditText City = new EditText(ChatActivity.this);
+        City.setText("City");
+        layout.addView(City);
+
+
+        builder.setView(layout);
+
+        //create update and cancel button
+        builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                final String shippingName = Shipping_name.getText().toString();
+                final String contactNo = Contact_no.getText().toString();
+                final String homeAddr = Home_addr.getText().toString();
+                final String city = City.getText().toString();
+
+                userMessageInput.setText("Shipping Name: " + shippingName +"\n"+"Contact No: " + contactNo + "\n"+ "Home Address: " + homeAddr +"\n" +"City: "+ city);
+                SendMessage();
+
+
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.cancel();
+            }
+        });
+        Dialog dialog = builder.create();
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+    }
+
+
+
+    //add3
+    private void EditProductPrice(final String ProductName)
+    {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+            builder.setTitle("Please enter make offer's price");
+
+            LinearLayout layout = new LinearLayout(ChatActivity.this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            final EditText inputField = new EditText(ChatActivity.this);
+            layout.addView(inputField);
+
+
+            builder.setView(layout);
+
+            //create update and cancel button
+            builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                   final String product_price = inputField.getText().toString();
+                   userMessageInput.setText("I am interested on product: " + ProductName +"\n"+" I want to make an offer for RM:" + product_price);
+                   SendMessage();
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.cancel();
+                }
+            });
+            Dialog dialog = builder.create();
+            dialog.show();
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.darker_gray);
+
+        }
 
 //add
 
@@ -313,6 +458,13 @@ public class ChatActivity extends AppCompatActivity
        // userMessagesList.setHasFixedSize(true);
         userMessagesList.setLayoutManager(linearLayoutManager);
         userMessagesList.setAdapter(messageAdapter);
+
+        //add 3
+        ShippingDetailsButton = (Button) findViewById(R.id.Shipping_addr);
+        BargainProductButton = (Button) findViewById(R.id.Price_bargain_button);
+
+
+
 
 
     }

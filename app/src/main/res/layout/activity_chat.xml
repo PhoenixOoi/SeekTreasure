@@ -16,12 +16,39 @@
         android:id="@+id/messages_list_users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/chat_bar_layout"
         android:layout_above="@+id/myLinearLayout"
-        android:background="@android:color/darker_gray"
-        android:layout_centerHorizontal="true" >
+        android:layout_below="@+id/chat_bar_layout"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@android:color/darker_gray">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/Price_bargain_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginBottom="60dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="Make Offer"
+        android:textColor="@android:color/background_light" />
+
+    <Button
+        android:id="@+id/Shipping_addr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="127dp"
+        android:layout_marginBottom="60dp"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@android:color/background_light"
+        android:text="Shipping" />
 
     <RelativeLayout
         android:id="@+id/myLinearLayout"
@@ -31,6 +58,7 @@
         android:layout_alignParentStart="true"
         android:background="@android:color/background_light"
         android:orientation="horizontal">
+
 
         <ImageButton
             android:id="@+id/send_image_file_button"
@@ -54,5 +82,7 @@
             android:src="@drawable/ic_send_message"/>
 
     </RelativeLayout>
+
+
 
 </RelativeLayout>

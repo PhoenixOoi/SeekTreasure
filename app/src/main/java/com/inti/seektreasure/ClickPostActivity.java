@@ -121,7 +121,7 @@ public class ClickPostActivity extends AppCompatActivity
                         @Override
                         public void onClick(View v)
                         {
-                            BargainActivity(databaseUserID);
+                            BargainActivity(databaseUserID, pname);
 
                         }
                     });
@@ -249,7 +249,7 @@ public class ClickPostActivity extends AppCompatActivity
     }
 
     //add1
-    private void BargainActivity(final String databaseUserID)
+    private void BargainActivity(final String databaseUserID, final String productname)
     {
         UsersRef.child(databaseUserID).addValueEventListener(new ValueEventListener()
         {
@@ -263,6 +263,8 @@ public class ClickPostActivity extends AppCompatActivity
                     //send user id
                     Chatintent.putExtra("visit_user_id",databaseUserID); // from person profile pic send user id //sending to the chat activity
                     Chatintent.putExtra("userName",userName);
+                    //add 3
+                    Chatintent.putExtra("pname", productname);
                     startActivity(Chatintent);
                 }
             }
