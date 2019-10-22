@@ -323,8 +323,9 @@ public class MainActivity extends AppCompatActivity
                         return viewHolder;
                     }
                 };
-        firebaseRecyclerAdapter.startListening();
+
         postList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.startListening();
 
         //whenever the app run
         //call this method and pass the state
@@ -449,6 +450,7 @@ public class MainActivity extends AppCompatActivity
 
         Intent addNewPostIntent = new Intent(MainActivity.this,PostActivity.class);
         startActivity(addNewPostIntent);
+
     }
 
 

@@ -94,6 +94,7 @@ public class ClickPostActivity extends AppCompatActivity
                     category = dataSnapshot.child("category").getValue().toString();
                     price = dataSnapshot.child("price").getValue().toString();
                    // postimage = dataSnapshot.child("postimage").getValue().toString();
+                   // postimage = dataSnapshot.child("postimage").getValue(String.class);
 
                     if(dataSnapshot.hasChild("postimage"))
                     {
@@ -149,6 +150,7 @@ public class ClickPostActivity extends AppCompatActivity
 
                         }
                     });
+
 
                 }
                 else

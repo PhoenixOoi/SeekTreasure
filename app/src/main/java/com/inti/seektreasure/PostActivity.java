@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -52,7 +53,7 @@ public class PostActivity extends AppCompatActivity
     private DatabaseReference UsersRef, PostsRef; //Postsref for Post node
     private FirebaseAuth mAuth;
 
-    private String saveCurrentDate, saveCurrentTime, postRandomName, downloadUrl, current_user_id;
+    private String saveCurrentDate, saveCurrentTime, postRandomName,downloadUrl, current_user_id;
     private long countPosts = 0; // count number of post in database
 
     @Override
@@ -115,22 +116,27 @@ public class PostActivity extends AppCompatActivity
         if(ImageUri == null)
         {
             Toast.makeText(this,"Please select post image.",Toast.LENGTH_SHORT).show();
+            return;
         }
         if(TextUtils.isEmpty(PName))
         {
             Toast.makeText(this,"Please write product name.",Toast.LENGTH_SHORT).show();
+            return;
         }
         if(TextUtils.isEmpty(Description))
         {
             Toast.makeText(this,"Please write product description.",Toast.LENGTH_SHORT).show();
+            return;
         }
         if(TextUtils.isEmpty(Price))
         {
             Toast.makeText(this,"Please write product price.",Toast.LENGTH_SHORT).show();
+            return;
         }
         if(TextUtils.isEmpty(Category))
         {
             Toast.makeText(this,"Please write product category.",Toast.LENGTH_SHORT).show();
+            return;
         }
         else
         {
@@ -198,13 +204,17 @@ public class PostActivity extends AppCompatActivity
                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final String downloadUrl = uri.toString();
+                            downloadUrl = uri.toString();
                             PostsRef.child(current_user_id + postRandomName).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
+                                    if (task.isSuccessful())
+                                    {
                                         Toast.makeText(PostActivity.this, "image uploaded successfully to Storage", Toast.LENGTH_SHORT).show();
-                                    } else {
+
+                                    }
+                                    else
+                                        {
                                         Toast.makeText(PostActivity.this, "Image failed to upload. Please try again.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -212,9 +222,8 @@ public class PostActivity extends AppCompatActivity
                         }
                     });
 
-                    Toast.makeText(PostActivity.this,
-                            "Image uploaded successfully to storage", Toast.LENGTH_SHORT).show();
-                    SavingPostInformationToDatabase();
+                    Toast.makeText(PostActivity.this, "Image uploaded successfully to storage", Toast.LENGTH_SHORT).show();
+                   SavingPostInformationToDatabase();
 
                 }
                 else
@@ -224,7 +233,8 @@ public class PostActivity extends AppCompatActivity
                     }
             }
         });
-    }
+
+}
 
     private void SavingPostInformationToDatabase()
     {
@@ -287,9 +297,9 @@ public class PostActivity extends AppCompatActivity
                     PostsRef.child(current_user_id + postRandomName).updateChildren(postsMap)
                             .addOnCompleteListener(new OnCompleteListener() {
                                 @Override
-                                public void onComplete(@NonNull Task Posttask)
+                                public void onComplete(@NonNull Task task)
                                 {
-                                    if(Posttask.isSuccessful())
+                                    if(task.isSuccessful())
                                     {
                                         SendUserToMainActivity();
                                         Toast.makeText(PostActivity.this,"New Post is added successfully",Toast.LENGTH_SHORT).show();
@@ -357,6 +367,7 @@ public class PostActivity extends AppCompatActivity
     {
         Intent mainIntent = new Intent (PostActivity.this,MainActivity.class);
         startActivity(mainIntent);
+        finish();
 
     }
 }
