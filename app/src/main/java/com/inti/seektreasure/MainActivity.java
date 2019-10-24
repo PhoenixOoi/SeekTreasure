@@ -553,19 +553,24 @@ public class MainActivity extends AppCompatActivity
                 //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
                 break;
 
+            //add search
+            case R.id.nav_search_product:
+                SendUserToSearchProductActivity();
+                break;
+
                 //add nearby
             case R.id.nav_nearby:
                 SendUserToNearbyActivity();
-                //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_find_people:
+                //SendUserToFindSellerBuyerActivity();
                 SendUserToFindSellerBuyerActivity();
                 Toast.makeText(this,"Find People", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_messages:
-                SendUserToFollowersActivity();// will change to whom we talk for the last time
+                SendUserToMessagesActivity();// will change to whom we talk for the last time
                 Toast.makeText(this,"Messages", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -582,6 +587,19 @@ public class MainActivity extends AppCompatActivity
                 SendUserToLoginActivity();
                 break;
         }
+    }
+
+    private void SendUserToMessagesActivity()
+    {
+        Intent messagesIntent = new Intent(MainActivity.this, MessagesActivity.class);
+        startActivity(messagesIntent);
+    }
+
+    //add search
+    private void SendUserToSearchProductActivity()
+    {
+        Intent searchIntent = new Intent(MainActivity.this, SearchProductActivity.class);
+        startActivity(searchIntent);
     }
 
     private void SendUserToNearbyActivity()
