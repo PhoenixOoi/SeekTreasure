@@ -8,17 +8,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity
     //for navigation drawer header user profile
     private CircleImageView NavProfileImage;
     private TextView NavProfileUserName;
-    private ImageButton AddNewPostButton;
+    private ImageButton AddNewPostButton, NotifyButton;
 
     //check the user authenticate or not
     private FirebaseAuth mAuth;
@@ -65,14 +63,14 @@ public class MainActivity extends AppCompatActivity
 
     Boolean LikeChecker = false;
 
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        startService(new Intent(this,NotificationService.class));
         mAuth = FirebaseAuth.getInstance();
-        currentUserID = mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null){
+            currentUserID = mAuth.getCurrentUser().getUid();
+        }
         //store user information in Users parent node
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -86,6 +84,8 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle("Home");
 
         AddNewPostButton = (ImageButton) findViewById(R.id.add_new_post_button);
+        NotifyButton = (ImageButton) findViewById(R.id.notification_button) ;
+
 
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawable_layout);
@@ -119,40 +119,41 @@ public class MainActivity extends AppCompatActivity
 
         //get the username and image from the firebase database
         //need user references, the user online we only display his images
-        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-            {
-                if (dataSnapshot.exists())
+        if(!TextUtils.isEmpty(currentUserID)){
+            UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
                 {
-                    //if the database got user full name then display the name
-                    if(dataSnapshot.hasChild("fullname"))
+                    if (dataSnapshot.exists())
                     {
-                        //get the name from the database and store in varibles
-                        String fullname = dataSnapshot.child("fullname").getValue().toString();
-                        //display on the navigation header
-                        NavProfileUserName.setText(fullname);
+                        //if the database got user full name then display the name
+                        if(dataSnapshot.hasChild("fullname"))
+                        {
+                            //get the name from the database and store in varibles
+                            String fullname = dataSnapshot.child("fullname").getValue().toString();
+                            //display on the navigation header
+                            NavProfileUserName.setText(fullname);
+                        }
+                        if (dataSnapshot.hasChild("profileimage"))
+                        {
+                            String image = dataSnapshot.child("profileimage").getValue().toString();
+                            Picasso.get().load(image).placeholder(R.drawable.profile).into(NavProfileImage);
+                        }
+                        else
+                        {
+                            Toast.makeText(MainActivity.this,"Profile name do not exists.",Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    if (dataSnapshot.hasChild("profileimage"))
-                    {
-                        String image = dataSnapshot.child("profileimage").getValue().toString();
-                        Picasso.get().load(image).placeholder(R.drawable.profile).into(NavProfileImage);
-                    }
-                    else
-                    {
-                        Toast.makeText(MainActivity.this,"Profile name do not exists.",Toast.LENGTH_SHORT).show();
-                    }
+
                 }
 
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError)
+                {
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError)
-            {
-
-            }
-        });
-
+                }
+            });
+        }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem)
@@ -163,12 +164,21 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        NotifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                SendUserToNotificationActivity();
+
+
+            }
+        });
+
         AddNewPostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 SendUserToPostActivity();
-
             }
         });
 
@@ -176,6 +186,8 @@ public class MainActivity extends AppCompatActivity
         DisplayAllUsersPosts();
 
     }
+
+
 
     //state will be online offline
     public void updateUserStatus(String state)
@@ -199,8 +211,10 @@ public class MainActivity extends AppCompatActivity
 
         //already create the references for the user node
         //create another child for saving the online user information(online status and last seen info) under parent node
-        UsersRef.child(currentUserID).child("userState")
-                .updateChildren(currentStateMap);
+        if(!TextUtils.isEmpty(currentUserID)){
+            UsersRef.child(currentUserID).child("userState")
+                    .updateChildren(currentStateMap);
+        }
 
     }
 
@@ -553,10 +567,14 @@ public class MainActivity extends AppCompatActivity
                 //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
                 break;
 
+            //add search
+            case R.id.nav_search_product:
+                SendUserToSearchProductActivity();
+                break;
+
                 //add nearby
             case R.id.nav_nearby:
                 SendUserToNearbyActivity();
-                //Toast.makeText(this,"Followers", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_find_people:
@@ -565,7 +583,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_messages:
-                SendUserToFollowersActivity();// will change to whom we talk for the last time
+                SendUserToMessagesActivity();// will change to whom we talk for the last time
                 Toast.makeText(this,"Messages", Toast.LENGTH_SHORT).show();
                 break;
 
@@ -582,6 +600,25 @@ public class MainActivity extends AppCompatActivity
                 SendUserToLoginActivity();
                 break;
         }
+    }
+
+    private void SendUserToNotificationActivity()
+    {
+        Intent messageIntent = new Intent(MainActivity.this, NotificationActivity.class);
+        startActivity(messageIntent);
+    }
+
+    private void SendUserToMessagesActivity()
+    {
+        Intent messageIntent = new Intent(MainActivity.this, MessagesActivity.class);
+        startActivity(messageIntent);
+    }
+
+    //add search
+    private void SendUserToSearchProductActivity()
+    {
+        Intent searchIntent = new Intent(MainActivity.this, SearchProductActivity.class);
+        startActivity(searchIntent);
     }
 
     private void SendUserToNearbyActivity()

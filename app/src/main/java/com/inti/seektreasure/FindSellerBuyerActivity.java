@@ -64,8 +64,9 @@ public class FindSellerBuyerActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 String searchBoxInput = SearchInputText.getText().toString();
+                String searchBoxInput1 = searchBoxInput.substring(0,1).toUpperCase()+ searchBoxInput.substring(1);
 
-                SearchSellerBuyer(searchBoxInput);
+                SearchSellerBuyer(searchBoxInput1);
 
             }
         });
@@ -75,7 +76,7 @@ public class FindSellerBuyerActivity extends AppCompatActivity
     //create module (FindSellerBuyer) for first parameter to retrieve the username,status and country
     //second parameter is static class which is FindSellerBuyerViewHolder
 
-    private void SearchSellerBuyer(String searchBoxInput)
+    private void SearchSellerBuyer(String searchBoxInput1)
     {
         Toast.makeText(this,"Searching...",Toast.LENGTH_SHORT).show();
 
@@ -83,7 +84,7 @@ public class FindSellerBuyerActivity extends AppCompatActivity
            //     .startAt(searchBoxInput.endsWith(searchBoxInput + "\uf8ff");
 
         FirebaseRecyclerOptions<FindSellerBuyer> options=new FirebaseRecyclerOptions.Builder<FindSellerBuyer>()
-                .setQuery(allUsersDatabaseRef.orderByChild("fullname").startAt(searchBoxInput), FindSellerBuyer.class).build(); //query build past the query to FirebaseRecyclerAdapter
+                .setQuery(allUsersDatabaseRef.orderByChild("fullname").startAt(searchBoxInput1), FindSellerBuyer.class).build(); //query build past the query to FirebaseRecyclerAdapter
 
 
 

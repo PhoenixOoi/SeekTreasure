@@ -5,10 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Sampler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,12 +40,17 @@ public class PersonProfileActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private String senderUserId, receiverUserId, CURRENT_STATE, saveCurrentDate; //user who will be online will send friend request
 
+    private String saveCurrentDateReq, SaveCurrentTimeReq;
+
     //add
     private DatabaseReference FollowersRef, PostsRef;
 
     //add
     private Button MyPosts, MyFollowers;
     private int countFollowers= 0, countPosts = 0;
+
+    //add 6
+    public static Bundle mMyAppsBundle = new Bundle();
 
 
     @Override
@@ -376,6 +386,7 @@ public class PersonProfileActivity extends AppCompatActivity
                                                 SendFriendReqbutton.setText("Send Friend Request");
 
 
+
                                                 DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
                                                 DeclineFriendRequestButton.setEnabled(false);
                                             }
@@ -398,68 +409,62 @@ public class PersonProfileActivity extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 //validation
-                if(dataSnapshot.hasChild(receiverUserId))
-                {
+                if(dataSnapshot.hasChild(receiverUserId)) {
                     //store two type one is received one is sent
                     //linking to the firebase database and check for the request type
                     //retrieve the request type
-                    String request_type = dataSnapshot.child(receiverUserId).child("request_type")
-                            .getValue().toString();
+                    if (dataSnapshot.child(receiverUserId).child("request_type").exists()) {
+                        String request_type = dataSnapshot.child(receiverUserId).child("request_type")
+                                .getValue().toString();
 
-                    if(request_type.equals("sent"))
-                    {
-                        CURRENT_STATE = "request_sent";
-                        SendFriendReqbutton.setText("Cancel Friend Request");
-                        DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
-                        DeclineFriendRequestButton.setEnabled(false);
-                    }
-                    else if (request_type.equals("received"))
-                    {
-                        CURRENT_STATE = "request_received";
-                        SendFriendReqbutton.setText("Accept Friend Request");
 
-                        //for user to have the option to cancel the request
-                        DeclineFriendRequestButton.setVisibility(View.VISIBLE);
-                        DeclineFriendRequestButton.setEnabled(true);
+                        if (request_type.equals("sent")) {
+                            CURRENT_STATE = "request_sent";
+                            SendFriendReqbutton.setText("Cancel Friend Request");
+                            DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
+                            DeclineFriendRequestButton.setEnabled(false);
+                        } else if (request_type.equals("received")) {
+                            CURRENT_STATE = "request_received";
+                            SendFriendReqbutton.setText("Accept Friend Request");
 
-                        DeclineFriendRequestButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v)
-                            {
-                                //cancel that friend request that the person sent 
-                                CancelFriendRequest();
-                            }
-                        });
-                    }
-                }
-                else
-                {
-                    FriendsRef.child(senderUserId)
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                            //for user to have the option to cancel the request
+                            DeclineFriendRequestButton.setVisibility(View.VISIBLE);
+                            DeclineFriendRequestButton.setEnabled(true);
+
+                            DeclineFriendRequestButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
-                                {
-                                    //the person who will received the friend request
-                                    if(dataSnapshot.hasChild(receiverUserId))
-                                    {
-                                        //maintain the data and button to show unfriend this person if the user come back to view the person
-                                        CURRENT_STATE = "friends";
-                                        SendFriendReqbutton.setText("Unfriend this Person");
-
-                                        DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
-                                        DeclineFriendRequestButton.setEnabled(false);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError)
-                                {
-
+                                public void onClick(View v) {
+                                    //cancel that friend request that the person sent
+                                    CancelFriendRequest();
                                 }
                             });
+                        }
+                    } else {
+                        FriendsRef.child(senderUserId)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        //the person who will received the friend request
+                                        if (dataSnapshot.hasChild(receiverUserId)) {
+                                            //maintain the data and button to show unfriend this person if the user come back to view the person
+                                            CURRENT_STATE = "friends";
+                                            SendFriendReqbutton.setText("Unfriend this Person");
+
+                                            DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
+                                            DeclineFriendRequestButton.setEnabled(false);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                    }
                 }
 
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError)
@@ -481,6 +486,111 @@ public class PersonProfileActivity extends AppCompatActivity
                     {
                         if(task.isSuccessful())
                         {
+
+                            //stored data
+                            //first get current time n date, go post activity to copy cuz already created
+                            Calendar calForDate = Calendar.getInstance();
+                            SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy"); //get current date n stored in variable
+                            //format to string data type
+                            final String saveCurrentDateReq = currentDate.format(calForDate.getTime());
+
+                            Calendar calForTime = Calendar.getInstance();
+                            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm"); //get current date n stored in variable
+                            //format to string data type
+                            final String saveCurrentTimeReq = currentTime.format(calForDate.getTime());
+
+
+                            UsersRef.child(receiverUserId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                {
+                                    if(dataSnapshot.exists())
+                                    {
+//                                        final String userName = dataSnapshot.child("fullname").getValue().toString();
+                                        UsersRef.child(senderUserId).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+                                            {
+                                                final String userName = dataSnapshot.child("fullname").getValue().toString();
+
+                                                //stored it
+                                                HashMap FriendsReqMap = new HashMap();
+                                                FriendsReqMap.put("date",saveCurrentDateReq);
+                                                FriendsReqMap.put("time",saveCurrentTimeReq);
+                                                FriendsReqMap.put("fullname",userName);
+                                                FriendsReqMap.put("fromUserID",senderUserId);
+
+                                                FriendRequestRef.child(receiverUserId).child(senderUserId).updateChildren(FriendsReqMap)
+                                                        .addOnCompleteListener(new OnCompleteListener() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task task)
+                                                            {
+                                                                if(task.isSuccessful())
+                                                                {
+//                                                                                        UsersRef.child(receiverUserId).addValueEventListener(new ValueEventListener() {
+//                                                                                            @Override
+//                                                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+//                                                                                            {
+//                                                                                                final String userName = dataSnapshot.child("fullname").getValue().toString();
+//
+//                                                                                                //stored it
+//                                                                                                HashMap FriendsReqMap = new HashMap();
+//                                                                                                FriendsReqMap.put("date",saveCurrentDateReq);
+//                                                                                                FriendsReqMap.put("time",saveCurrentTimeReq);
+//                                                                                                FriendsReqMap.put("fullname",userName);
+//                                                                                                FriendsReqMap.put("fromUserID",senderUserId);
+//
+//                                                                                                FriendRequestRef.child(senderUserId).child(receiverUserId).updateChildren(FriendsReqMap)
+//                                                                                                        .addOnCompleteListener(new OnCompleteListener()
+//                                                                                                        {
+//                                                                                                            @Override
+//                                                                                                            public void onComplete(@NonNull Task task)
+//                                                                                                            {
+//                                                                                                                if(task.isSuccessful())
+//                                                                                                                {
+//                                                                                                                    Log.d("save","save successfully");
+//                                                                                                                }
+//                                                                                                            }
+//                                                                                                        });
+//                                                                                            }
+//
+//                                                                                            @Override
+//                                                                                            public void onCancelled(@NonNull DatabaseError databaseError)
+//                                                                                            {
+//
+//                                                                                            }
+//                                                                                        });
+                                                                    Toast.makeText(PersonProfileActivity.this,"You have save request details successfully.",Toast.LENGTH_SHORT).show();
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    Toast.makeText(PersonProfileActivity.this,"Error Occurred. Try Again.",Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+
+
+
+
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError)
+                                {
+
+                                }
+                            });
+
                             //data will be for the sender
                             //in the node there will be receiver ID first and then sender ID then request type in firebase
                             FriendRequestRef.child(receiverUserId).child(senderUserId)
@@ -497,10 +607,14 @@ public class PersonProfileActivity extends AppCompatActivity
 
                                                 DeclineFriendRequestButton.setVisibility(View.INVISIBLE);
                                                 DeclineFriendRequestButton.setEnabled(false);
+
+
                                             }
 
                                         }
                                     });
+
+
                         }
 
                     }

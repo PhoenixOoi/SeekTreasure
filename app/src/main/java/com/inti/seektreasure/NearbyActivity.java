@@ -63,8 +63,9 @@ public class NearbyActivity extends AppCompatActivity
             public void onClick(View v)
             {
                 String searchBoxInput = NearbySearchInputText.getText().toString();
+                String searchBoxInput1 = searchBoxInput.substring(0, 1).toUpperCase() + searchBoxInput.substring(1);
 
-                NearbySearchSellerBuyer(searchBoxInput);
+                NearbySearchSellerBuyer(searchBoxInput1);
 
             }
         });
@@ -74,7 +75,7 @@ public class NearbyActivity extends AppCompatActivity
     //create module (FindSellerBuyer) for first parameter to retrieve the username,status and country
     //second parameter is static class which is FindSellerBuyerViewHolder
 
-    private void NearbySearchSellerBuyer(String searchBoxInput)
+    private void NearbySearchSellerBuyer(String searchBoxInput1)
     {
         Toast.makeText(this,"Searching...",Toast.LENGTH_SHORT).show();
 
@@ -84,7 +85,7 @@ public class NearbyActivity extends AppCompatActivity
 
 
         FirebaseRecyclerOptions<Nearby> options=new FirebaseRecyclerOptions.Builder<Nearby>()
-                .setQuery(allUsersDatabaseRef.orderByChild("country").startAt(searchBoxInput), Nearby.class).build();
+                .setQuery(allUsersDatabaseRef.orderByChild("country").startAt(searchBoxInput1), Nearby.class).build();
 
 
 

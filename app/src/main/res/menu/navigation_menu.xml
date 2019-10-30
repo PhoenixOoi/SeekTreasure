@@ -21,6 +21,12 @@
         android:title="followers"
         android:icon="@drawable/friends"/>
 
+    //add search product
+    <item
+        android:id="@+id/nav_search_product"
+        android:title="Search Product"
+        android:icon="@drawable/ic_search"/>
+
     //add find nearby store
     <item
         android:id="@+id/nav_nearby"
