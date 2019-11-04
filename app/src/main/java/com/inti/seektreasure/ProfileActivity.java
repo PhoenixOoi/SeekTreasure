@@ -158,7 +158,7 @@ public class ProfileActivity extends AppCompatActivity
                     userProfName.setText(myProfileName);
                     userStatus.setText(myProfileStatus);
                     userDOB.setText("Date of Birth: " + myDOB);
-                    userCountry.setText("Country: " + myCountry);
+                    userCountry.setText("States: " + myCountry);
                     userGender.setText("Gender: " + myGender);
                     SellerBuyer.setText("Seller or Buyer: " + mySellerBuyer);
 

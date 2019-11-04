@@ -259,7 +259,7 @@ public class NotificationService extends Service {
             manager.createNotificationChannel(channel);
             Notification notification = new Notification.Builder(mContext, id)
                     .setCategory(Notification.CATEGORY_MESSAGE)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.ic_app_icon)
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(pendingIntent)
@@ -272,7 +272,7 @@ public class NotificationService extends Service {
                     .setContentTitle(title)
                     .setContentText(msg)
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.ic_app_icon)
                     .build();
             manager.notify(1, notification);
         }

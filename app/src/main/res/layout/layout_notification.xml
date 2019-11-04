@@ -9,7 +9,7 @@
         android:id="@+id/image"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@mipmap/ic_launcher" />
+        android:background="@mipmap/ic_app_icon" />
 
     <TextView
         android:id="@+id/title"
