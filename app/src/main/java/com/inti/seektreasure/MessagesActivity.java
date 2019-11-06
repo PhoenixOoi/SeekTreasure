@@ -33,6 +33,11 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
+/**
+ * Create by OCF on 2019
+ */
+
 public class MessagesActivity extends AppCompatActivity {
 
     private RecyclerView myMessagesList;

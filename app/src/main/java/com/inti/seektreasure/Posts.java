@@ -1,5 +1,8 @@
 package com.inti.seektreasure;
 
+/**
+ * Create by OCF on 2019
+ */
 
 //retrieve posts information from firebase
 public class Posts

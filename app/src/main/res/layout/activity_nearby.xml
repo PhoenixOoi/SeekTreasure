@@ -40,7 +40,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/inputs"
             android:ems="10"
-            android:hint="Search"
+            android:hint="Search by States eg. Penang"
             android:inputType="textImeMultiLine"
             android:padding="10dp"
             android:textColorHint="@color/colorProfile" />

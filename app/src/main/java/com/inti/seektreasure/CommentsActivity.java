@@ -31,6 +31,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class CommentsActivity extends AppCompatActivity
 {
     private RecyclerView CommentsList;

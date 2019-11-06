@@ -9,6 +9,10 @@ import android.view.View;
 
 import gr.net.maroulis.library.EasySplashScreen;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class SplashScreen extends AppCompatActivity {
 
     @Override

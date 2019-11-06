@@ -16,6 +16,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class ResetPasswordActivity extends AppCompatActivity
 {
     private Toolbar mToolbar;

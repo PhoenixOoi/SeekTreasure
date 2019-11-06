@@ -33,6 +33,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import org.w3c.dom.Text;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class LoginActivity extends AppCompatActivity
 {
     //initialise the field

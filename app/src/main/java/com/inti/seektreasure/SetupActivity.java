@@ -37,6 +37,10 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class SetupActivity extends AppCompatActivity
 {
 

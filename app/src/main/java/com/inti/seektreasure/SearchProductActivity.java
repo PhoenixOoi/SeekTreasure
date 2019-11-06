@@ -31,6 +31,10 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class SearchProductActivity extends AppCompatActivity {
     private Button SearchBtn;
     private EditText SearchProductInputText;

@@ -1,5 +1,9 @@
 package com.inti.seektreasure;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class FriendRequests {
 
 

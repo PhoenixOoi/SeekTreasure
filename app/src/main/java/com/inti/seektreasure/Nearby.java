@@ -1,5 +1,9 @@
 package com.inti.seektreasure;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class Nearby {
     //use same name in database
     public String profileimage, fullname, status, country;

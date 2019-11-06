@@ -49,8 +49,9 @@ import java.util.concurrent.Executors;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Create by lizhangmin on 2019/10/24
+ * Create by OCF on 2019/10/24
  */
+
 public class NotificationService extends Service {
 
     private Context mContext;

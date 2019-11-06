@@ -45,6 +45,10 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class ChatActivity extends AppCompatActivity
 {
     private Toolbar ChattoolBar;

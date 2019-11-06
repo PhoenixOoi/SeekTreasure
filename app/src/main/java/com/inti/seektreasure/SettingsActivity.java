@@ -37,6 +37,11 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+
+/**
+ * Create by OCF on 2019
+ */
+
 public class SettingsActivity extends AppCompatActivity
 {
     private Toolbar mToolbar;

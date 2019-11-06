@@ -23,6 +23,10 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>
 {
 

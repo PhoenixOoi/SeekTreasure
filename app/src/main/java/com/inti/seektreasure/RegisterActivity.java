@@ -21,6 +21,10 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class RegisterActivity extends AppCompatActivity
 {
     private EditText UserEmail, UserPassword, UserConfirmPassword;

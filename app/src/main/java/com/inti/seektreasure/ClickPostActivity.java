@@ -26,6 +26,10 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+/**
+ * Create by OCF on 2019
+ */
+
 public class ClickPostActivity extends AppCompatActivity
 {
     private ImageView PostImage;
